@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const leadRouter = router({
   createLead: publicProcedure
@@ -13,4 +13,10 @@ export const leadRouter = router({
         lead,
       };
     }),
+  listLeads: protectedProcedure.query(async ({ ctx }) => {
+    const leads = await ctx.prisma.lead.findMany();
+    return {
+      leads,
+    };
+  }),
 });

@@ -1,10 +1,12 @@
 import { trpc } from "../utils/trpc";
 import { Form, Field } from "react-final-form";
 import { z } from "zod";
+import { useRef, useState } from "react";
 
 export default function WaitingList() {
   const createLead = trpc.lead.createLead.useMutation();
-
+  const checkbox = useRef<any>(null);
+  const [submitted, setSubmitted] = useState(false);
   const lead = z.object({
     email: z.string().email(),
     name: z.string(),
@@ -16,6 +18,8 @@ export default function WaitingList() {
       email: data.email,
     });
     form && form.restart && form.restart();
+    setSubmitted(true);
+    checkbox.current ? (checkbox.current.checked = false) : "";
   };
 
   return (
@@ -89,6 +93,11 @@ export default function WaitingList() {
                   )}
                 </div>
               </div>
+              <div>
+                {submitted && (
+                  <div>Grazie per esserti iscritto! Ci sentiamo presto ✌️</div>
+                )}
+              </div>
               <div className="flex">
                 <div className="relative flex items-start">
                   <div className="flex h-5 items-center">
@@ -98,6 +107,7 @@ export default function WaitingList() {
                       name="policy"
                       type="checkbox"
                       required
+                      ref={checkbox}
                       className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
                     />
                   </div>
