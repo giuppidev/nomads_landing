@@ -13,7 +13,7 @@ const config = {
     return [
       {
         source: "/",
-        destination: "/waiting-list",
+        destination: "/nomads",
         permanent: true,
       },
     ];

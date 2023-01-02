@@ -1,27 +1,49 @@
-import { trpc } from "../utils/trpc";
-import { Form, Field } from "react-final-form";
+import { Field, Form } from "react-final-form";
+import MailchimpSubscribe from "react-mailchimp-subscribe";
 import { z } from "zod";
-import { useRef, useState } from "react";
+
+const url = process.env.NEXT_PUBLIC_MAILCHIMP_ACTION as string;
+
+const validator = z.object({
+  email: z.string().email(),
+  name: z.string(),
+});
 
 export default function WaitingList() {
-  const createLead = trpc.lead.createLead.useMutation();
-  const checkbox = useRef<any>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const lead = z.object({
-    email: z.string().email(),
-    name: z.string(),
-  });
+  return (
+    <MailchimpSubscribe
+      url={url}
+      render={({ subscribe, status, message }) => (
+        <div>
+          <MailchimpForm
+            error={status === "error" ? (message as string) : ""}
+            submitting={status === "sending"}
+            success={status === "success"}
+            onSubmit={(formData) =>
+              subscribe({
+                EMAIL: formData.email,
+                FNAME: formData.name,
+              } as any)
+            }
+          />
+        </div>
+      )}
+    />
+  );
+}
+interface MailchimpFormProps {
+  onSubmit: (data: z.TypeOf<typeof validator>) => void;
+  error: string;
+  submitting: boolean;
+  success: boolean;
+}
 
-  const onSubmit = async (data: z.TypeOf<typeof lead>, form: any) => {
-    const lead = await createLead.mutate({
-      name: data.name,
-      email: data.email,
-    });
-    form && form.restart && form.restart();
-    setSubmitted(true);
-    checkbox.current ? (checkbox.current.checked = false) : "";
-  };
-
+const MailchimpForm = ({
+  onSubmit,
+  error,
+  submitting,
+  success,
+}: MailchimpFormProps) => {
   return (
     <Form
       onSubmit={onSubmit}
@@ -38,7 +60,7 @@ export default function WaitingList() {
               Sei nel posto giusto!
             </h2>
             <p className="inline pt-4 text-xl font-bold tracking-tight text-gray-700 sm:block sm:text-xl">
-              Iscriviti per sapere per primo cosa bolle in pentola, diventare un
+              Iscriviti per sapere per primo cosa sta arrivando, diventare un
               <span className="text-teal-600 "> nomade digitale</span> sarà una
               passeggiata! 🚀
             </p>
@@ -94,7 +116,7 @@ export default function WaitingList() {
                 </div>
               </div>
               <div>
-                {submitted && (
+                {success && (
                   <div>Grazie per esserti iscritto! Ci sentiamo presto ✌️</div>
                 )}
               </div>
@@ -107,7 +129,6 @@ export default function WaitingList() {
                       name="policy"
                       type="checkbox"
                       required
-                      ref={checkbox}
                       className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
                     />
                   </div>
@@ -130,4 +151,4 @@ export default function WaitingList() {
       )}
     />
   );
-}
+};
