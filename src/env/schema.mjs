@@ -21,6 +21,11 @@ export const serverSchema = z.object({
   ),
   GITHUB_ID: z.string(),
   GITHUB_SECRET: z.string(),
+  KANNON_HOST: z.string(),
+  KANNON_SENDER_EMAIL: z.string(),
+  KANNON_SENDER_ALIAS: z.string(),
+  KANNON_API_KEY: z.string(),
+  KANNON_DOMAIN: z.string(),
 });
 
 /**

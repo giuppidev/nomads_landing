@@ -1,7 +1,7 @@
 import { Field, Form } from "react-final-form";
 import MailchimpSubscribe from "react-mailchimp-subscribe";
 import { z } from "zod";
-import Me from "../components/me";
+import { trpc } from "../utils/trpc";
 
 const url = process.env.NEXT_PUBLIC_MAILCHIMP_ACTION as string;
 
@@ -11,27 +11,42 @@ const validator = z.object({
 });
 
 export default function WaitingList() {
+  const mut = trpc.mailer.sendWelcomeMail.useMutation();
+
   return (
-    <div className="flex w-full place-content-center justify-center bg-gray-100">
-      <MailchimpSubscribe
-        url={url}
-        render={({ subscribe, status, message }) => (
-          <div className=" w-full sm:w-2/3">
-            <MailchimpForm
-              error={status === "error" ? (message as string) : ""}
-              submitting={status === "sending"}
-              success={status === "success"}
-              onSubmit={(formData) =>
-                subscribe({
-                  EMAIL: formData.email,
-                  FNAME: formData.name,
-                } as any)
-              }
-            />
-          </div>
-        )}
-      />{" "}
+    <div>
+      <button
+        onClick={() =>
+          mut.mutateAsync({
+            firstName: "Giuppi",
+            email: "bounce-test@service.socketlabs.com",
+          })
+        }
+      >
+        SEND
+      </button>
     </div>
+  );
+
+  return (
+    <MailchimpSubscribe
+      url={url}
+      render={({ subscribe, status, message }) => (
+        <div>
+          <MailchimpForm
+            error={status === "error" ? (message as string) : ""}
+            submitting={status === "sending"}
+            success={status === "success"}
+            onSubmit={(formData) =>
+              subscribe({
+                EMAIL: formData.email,
+                FNAME: formData.name,
+              } as any)
+            }
+          />
+        </div>
+      )}
+    />
   );
 }
 interface MailchimpFormProps {
@@ -51,7 +66,7 @@ const MailchimpForm = ({
     <Form
       onSubmit={onSubmit}
       render={({ handleSubmit, invalid }) => (
-        <div className="grid   place-content-center content-center ">
+        <div className="grid h-screen place-content-center content-center bg-white">
           <div className="mx-auto flex max-w-7xl flex-col gap-2 py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
             <h2 className="inline text-3xl font-bold tracking-tight text-gray-800 sm:block sm:text-4xl">
               Vuoi diventare un programmatore web? 👨🏻‍💻
@@ -62,52 +77,8 @@ const MailchimpForm = ({
             <h2 className="inline text-3xl font-bold tracking-tight text-teal-600 sm:block sm:text-4xl">
               Sei nel posto giusto!
             </h2>
-            <div className="flex items-center gap-2 py-4">
-              <p className="inline  text-xl font-bold tracking-tight text-gray-800 sm:block sm:text-xl">
-                Mi chiamo Giuseppe, per gli amici{" "}
-                <span className="text-teal-600 ">Giuppi</span>, sono un
-                programmatore web da più di 10 anni e da 5{" "}
-                <span className="text-teal-600 ">lavoro viaggiando</span> per il
-                mondo.
-              </p>{" "}
-              <div className="flex-shrink-0">
-                <img
-                  className="h-24 w-24 rounded-full "
-                  src="https://res.cloudinary.com/de30mupo1/image/upload/ar_1:1,b_rgb:262c35,c_fill,g_auto,r_max,w_300/v1674753936/Progetto_senza_titolo_1_vxvnk1.png"
-                  alt=""
-                />
-              </div>{" "}
-            </div>
-            <div className="pt-4 sm:pt-1">
-              <p className="inline  text-xl font-bold tracking-tight text-gray-700 sm:block sm:text-xl">
-                Ho deciso di condividere la mia esperienza da programmatore e da
-                <span className="text-teal-600 "> nomade digitale</span> per
-                aiutarti a:
-              </p>
-              <ul className="list-inside list-disc pt-4 font-bold tracking-tight text-gray-700 sm:text-xl">
-                <li>
-                  imparare la{" "}
-                  <span className="text-teal-600 "> programmazione web</span>{" "}
-                  facendo pratica
-                </li>
-                <li>
-                  costruirti un
-                  <span className="text-teal-600 "> personal brand</span> per
-                  trovare lavoro in tutto il mondo
-                </li>
-                <li>
-                  accompagnarti nel percorso facendoti da{" "}
-                  <span className="text-teal-600 ">mentore</span> personalmente
-                </li>
-              </ul>
-            </div>
-            <h2 className="inline pt-4 text-2xl font-bold tracking-tight text-gray-800 sm:block sm:text-4xl">
-              Sei pronto a scoprire con me il tuo futuro da
-              <span className="text-teal-600 "> programmatore nomade</span>? 👨🏻‍💻
-              🌎
-            </h2>
             <p className="inline pt-4 text-xl font-bold tracking-tight text-gray-700 sm:block sm:text-xl">
-              Iscriviti per sapere per primo cosa ti aspetta, diventare un
+              Iscriviti per sapere per primo cosa sta arrivando, diventare un
               <span className="text-teal-600 "> nomade digitale</span> sarà una
               passeggiata! 🚀
             </p>
