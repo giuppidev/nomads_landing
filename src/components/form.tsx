@@ -29,7 +29,20 @@ export const WaitingForm = ({
             type="text"
             required
             className="w-full rounded-md border-gray-300 px-5 py-3 placeholder-gray-500 focus:border-teal-500 focus:ring-teal-500 sm:max-w-xl"
-            placeholder="Il tuo nome"
+            placeholder="Nome"
+          />
+        </div>
+        <div>
+          <label htmlFor="last" className="sr-only">
+            Last name
+          </label>
+          <Field
+            component="input"
+            id="last"
+            name="last"
+            type="text"
+            className="w-full rounded-md border-gray-300 px-5 py-3 placeholder-gray-500 focus:border-teal-500 focus:ring-teal-500 sm:max-w-xl"
+            placeholder="Cognome (opzionale)"
           />
         </div>
         <div>

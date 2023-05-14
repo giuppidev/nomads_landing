@@ -9,6 +9,7 @@ const url = process.env.NEXT_PUBLIC_MAILCHIMP_ACTION as string;
 const validator = z.object({
   email: z.string().email(),
   name: z.string(),
+  last: z.string(),
 });
 
 export default function WaitingList() {
@@ -26,6 +27,7 @@ export default function WaitingList() {
                 subscribe({
                   EMAIL: formData.email,
                   FNAME: formData.name,
+                  LNAME: formData.last,
                 } as any)
               }
             />
@@ -82,7 +84,7 @@ const MailchimpForm = ({
                 <div>
                   {" "}
                   <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-800 md:text-4xl ">
-                    Grazie per esserti iscritto! Ci sentiamo presto 🚀
+                    Grazie per esserti iscritto! Ci sentiamo presto ❤️
                   </h2>
                   <p className=" text-xl font-bold tracking-tight text-gray-600 sm:block sm:text-2xl">
                     (controlla la casella mail con le prime informazioni per te.
